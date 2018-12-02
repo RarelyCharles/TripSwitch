@@ -1,0 +1,123 @@
+<html>
+<head>
+<title>TripSwitch</title>
+</head>
+<body>
+
+<h1>Welcome to TripSwitch</h1>
+<p id="switches"></p>
+<script>
+var url = "http://10.0.0.1:8120/";
+
+function LeftSwitchOn(){
+	PostCommand("switch/left/on");
+	alert('Left switched on'); 
+}
+
+function LeftSwitchOff(){
+	PostCommand("switch/left/off");
+	alert('Left switched off'); 
+}
+
+function RightSwitchOn(){
+	PostCommand("switch/right/on");
+	alert('Right switched on'); 
+}
+
+function RightSwitchOff(){
+    PostCommand("switch/right/off");
+	alert('Right switched off'); 
+}
+
+function MoveSwitcherUp(){
+	PostCommand("move/up");
+	alert('Switcher moved up'); 
+}
+
+function MoveSwitcherDown(){
+    PostCommand("move/down");
+	alert('Switcher moved down'); 
+}
+
+function SwitchASwitch(switch_name, state){
+    PostCommand("switch/" + switch_name + "/" + state);
+	document.getElementById("textLog").value = "Flipped " + switch_name + " " + state + "\n" + document.getElementById("textLog").value
+}
+
+function GetListener() {
+	document.write("In listener")
+	document.write(this.responseText)
+	if (this.readyState == 4 && this.status == 200) {
+		// Print out switch table
+		var myObj = JSON.parse(xhttp.responseText);
+		var switchesText = ""
+		for (var key in myObj) {
+			if (myObj.hasOwnProperty(key)) {
+				switchesText += key + " "
+			}
+		}
+		document.getElementById("switches").innerHTML = switchesText;
+	}
+}
+	
+function GetSwitches(){
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			// Print out switch table
+			var myObj = JSON.parse(xhttp.responseText);
+			var switchesText = ""
+			for (var key in myObj) {
+				if (myObj.hasOwnProperty(key)) {
+					switchesText += key + " "
+				}
+			}
+			document.getElementById("switches").innerHTML = switchesText;
+		}
+	};
+	xhttp.open("GET", url + "switch/list", true);
+	xhttp.send();
+	document.write("Sent get")
+}
+
+function PostCommand(URLExtension){
+    var xhttp = new XMLHttpRequest();
+	xhttp.open("POST", url + URLExtension, false);
+	xhttp.send();
+}
+</script>
+
+<table >
+	<tr>
+		<th>Kitchen <button type="button" name="KitchenOn" onclick="SwitchASwitch('Kitchen','on',);">On</button>
+			<button type="button" name="KitchenOff" onclick="SwitchASwitch('Kitchen','off',);">Off</button></th>
+		<th>Laundry <button type="button" name="LaundryOn" onclick="SwitchASwitch('Laundry','on',);">On</button>
+			<button type="button" name="LaundryOff" onclick="SwitchASwitch('Laundry','off',);">Off</button></th>
+	</tr>
+	<tr>
+		<th>Master Bedroom <button type="button" name="MBedroomOn" onclick="SwitchASwitch('Master Bedroom','on',);">On</button>
+			<button type="button" name="MBedroomOff" onclick="SwitchASwitch('Master Bedroom','off',);">Off</button></th>
+		<th>Second Bedroom <button type="button" name="SBedroomOn" onclick="SwitchASwitch('Second Bedroom','on',);">On</button>
+			<button type="button" name="SBedroomOff" onclick="SwitchASwitch('Second Bedroom','off',);">Off</button></th>
+	</tr>
+	<tr>
+		<th>Living room <button type="button" name="LroomOn" onclick="SwitchASwitch('Living room','on',);">On</button>
+			<button type="button" name="LroomOff" onclick="SwitchASwitch('Living room','off',);">Off</button></th>
+		<th>Bathroom 1 <button type="button" name="Bath1On" onclick="SwitchASwitch('Bathroom 1','on',);">On</button>
+			<button type="button" name="Bath1Off" onclick="SwitchASwitch('Bathroom 1','off',);">Off</button>
+			Bathroom 2 <button type="button" name="Bath2On" onclick="SwitchASwitch('Bathroom 2','on',);">On</button>
+			<button type="button" name="Bath1Off" onclick="SwitchASwitch('Bathroom 2','off',);">Off</button></th>
+	</tr>
+</table>
+<p>Bedrooms and Living room<br />
+	<button type="button" onclick="SwitchASwitch('Master Bedroom','on',);SwitchASwitch('Second Bedroom','on',);SwitchASwitch('Living room','on',);">On</button>
+	<button type="button" onclick="SwitchASwitch('Master Bedroom','off',);SwitchASwitch('Second Bedroom','off',);SwitchASwitch('Living room','off',);">Off</button>
+</p>
+<p>Bathrooms<br />
+	<button type="button" onclick="SwitchASwitch('Bathroom 1','on',);SwitchASwitch('Bathroom 2','on',);">On</button>
+	<button type="button" onclick="SwitchASwitch('Bathroom 1','off',);SwitchASwitch('Bathroom 2','off',);">Off</button>
+</p>
+<textarea id="textLog" rows="10" cols="50">
+</textarea>
+</body>
+</html>
